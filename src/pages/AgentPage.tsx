@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect } from "react";
+import { DEMO_NOTICE, isDemoSource, sourceLabel } from "../data/source";
 import ReactMarkdown from "react-markdown";
 import { postChat } from "../api/client";
 import type { ChatProgram, Intent, UserProfile, UserType } from "../api/types";
@@ -16,6 +17,7 @@ interface AgentPageProps {
 
 interface Source {
   name: string;
+  isDemo: boolean;
   url?: string;
 }
 
@@ -112,7 +114,7 @@ function normalizeAgentMarkdown(text: string) {
   return text
     .replace(/\\([\\`*{}[\]()#+\-.!_>])/g, "$1")
     .replace(/^\s*\*\*\s*$/gm, "")
-    .replace(/(^|\s)(https?:\/\/[^\s<>)\]]+)/g, "$1[공식 출처]($2)")
+    .replace(/(^|\s)(https?:\/\/[^\s<>)\]]+)/g, "$1[출처]($2)")
     .replace(/\n{3,}/g, "\n\n");
 }
 
@@ -136,7 +138,7 @@ function AgentReply({ text, hasSources }: { text: string; hasSources: boolean })
           a: ({ children, href }) => {
             const label = String(children);
             const isRawUrl = /^https?:\/\//i.test(label);
-            const display = isRawUrl ? "공식 출처" : children;
+            const display = isRawUrl ? "출처" : children;
 
             if (hasSources || !href) {
               return <span style={{ fontWeight: 600 }}>{display}</span>;
@@ -259,8 +261,9 @@ export default function AgentPage({ profile, initQuery, programId, onOpenProgram
         session_id: null,
       });
       const sources = response.sources.map((source) => ({
-        name: source.source,
-        url: source.source_url || undefined,
+        name: sourceLabel(source.source),
+        isDemo: isDemoSource(source.source),
+        url: isDemoSource(source.source) ? undefined : source.source_url || undefined,
       }));
       const agentMsg: Message = {
         role: "agent",
@@ -806,7 +809,7 @@ export default function AgentPage({ profile, initQuery, programId, onOpenProgram
                       </div>
                       {msg.role === "agent" && (
                         <p style={{ fontSize: 10, color: mutedColor, margin: "0 2px", lineHeight: 1.5 }}>
-                          AI가 정리한 내용은 참고용이에요. 신청 전에는 공식 사이트에서 한 번 더 확인해 주세요.
+                          {msg.sources?.some((source) => source.isDemo) ? DEMO_NOTICE : "AI가 정리한 내용은 참고용이에요. 신청 전에는 공식 사이트에서 한 번 더 확인해 주세요."}
                         </p>
                       )}
                       {msg.programs && msg.programs.length > 0 && (

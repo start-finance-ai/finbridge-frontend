@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getProgram } from "../api/client";
 import type { Program } from "../api/types";
+import { DEMO_NOTICE, isDemoSource, sourceLabel } from "../data/source";
 import { toPlainText } from "../data/benefits";
 
 interface BenefitDetailPageProps {
@@ -11,8 +12,8 @@ interface BenefitDetailPageProps {
   goAgent: (program: Program) => void;
 }
 
-function displayValue(value: string | null | undefined) {
-  return toPlainText(value) || "공식 공고에서 확인 필요";
+function displayValue(value: string | null | undefined, source?: string) {
+  return toPlainText(value) || (isDemoSource(source) ? "데모 예제에 기재되지 않음" : "원문에서 확인 필요");
 }
 
 function formatDateTime(value: string | null) {
@@ -76,7 +77,7 @@ export default function BenefitDetailPage({
                   {program.subcategory || program.category || "지원사업"}
                 </span>
                 <span style={{ fontSize: 12, fontWeight: 600, padding: "4px 10px", borderRadius: 6, background: "#F3F4F6", color: "#6B7280" }}>
-                  {program.source}
+                  {sourceLabel(program.source)}
                 </span>
               </div>
               <button onClick={onToggleLike} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: `1.5px solid ${liked ? "#FCA5A5" : "var(--color-border)"}`, background: liked ? "#FEF2F2" : "#fff", color: liked ? "#DC2626" : "var(--color-muted-foreground)", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>
@@ -85,13 +86,13 @@ export default function BenefitDetailPage({
             </div>
 
             <h1 style={{ fontWeight: 800, fontSize: 24, margin: "0 0 10px", letterSpacing: "-0.5px", lineHeight: 1.35 }}>{program.program_name}</h1>
-            <p style={{ fontSize: 15, color: "var(--color-muted-foreground)", margin: "0 0 24px", lineHeight: 1.7 }}>{displayValue(program.summary_raw)}</p>
+            <p style={{ fontSize: 15, color: "var(--color-muted-foreground)", margin: "0 0 24px", lineHeight: 1.7 }}>{displayValue(program.summary_raw, program.source)}</p>
 
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
               {[
-                { label: "주관 기관", value: displayValue(program.provider) },
-                { label: "수행 기관", value: displayValue(program.executing_organization) },
-                { label: "신청 기간", value: displayValue(program.apply_period_text) },
+                { label: "주관 기관", value: displayValue(program.provider, program.source) },
+                { label: "수행 기관", value: displayValue(program.executing_organization, program.source) },
+                { label: "신청 기간", value: displayValue(program.apply_period_text, program.source) },
               ].map(({ label, value }) => (
                 <div key={label} style={{ padding: "14px 16px", borderRadius: 10, background: "var(--color-muted)", border: "1px solid var(--color-border)" }}>
                   <p style={{ fontSize: 11, color: "var(--color-muted-foreground)", margin: "0 0 4px" }}>{label}</p>
@@ -102,19 +103,19 @@ export default function BenefitDetailPage({
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <DetailSection title="지원 대상"><p style={{ fontSize: 14, margin: 0, lineHeight: 1.7 }}>{displayValue(program.target_type_raw)}</p></DetailSection>
-            <DetailSection title="신청 방법"><p style={{ fontSize: 14, margin: 0, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{displayValue(program.application_method_raw)}</p></DetailSection>
-            <DetailSection title="문의처"><p style={{ fontSize: 14, margin: 0, lineHeight: 1.7 }}>{displayValue(program.contact_raw)}</p></DetailSection>
+            <DetailSection title="지원 대상"><p style={{ fontSize: 14, margin: 0, lineHeight: 1.7 }}>{displayValue(program.target_type_raw, program.source)}</p></DetailSection>
+            <DetailSection title="신청 방법"><p style={{ fontSize: 14, margin: 0, lineHeight: 1.7, whiteSpace: "pre-wrap" }}>{displayValue(program.application_method_raw, program.source)}</p></DetailSection>
+            <DetailSection title="문의처"><p style={{ fontSize: 14, margin: 0, lineHeight: 1.7 }}>{displayValue(program.contact_raw, program.source)}</p></DetailSection>
             <DetailSection title="데이터 기준">
-              <p style={{ fontSize: 13, margin: 0, lineHeight: 1.7, color: "var(--color-muted-foreground)" }}>수집일 {formatDateTime(program.collected_at)} · 원문에 없는 지원금액이나 자격조건은 표시하지 않습니다.</p>
+              <p style={{ fontSize: 13, margin: 0, lineHeight: 1.7, color: "var(--color-muted-foreground)" }}>{isDemoSource(program.source) ? DEMO_NOTICE : `수집일 ${formatDateTime(program.collected_at)} · 원문에 없는 지원금액이나 자격조건은 표시하지 않습니다.`}</p>
             </DetailSection>
           </div>
 
           <div style={{ marginTop: 24, display: "flex", gap: 10, flexWrap: "wrap" }}>
-            {program.source_url && (
+            {!isDemoSource(program.source) && program.source_url && (
               <a href={program.source_url} target="_blank" rel="noreferrer" style={{ flex: 2, minWidth: 180, padding: 14, borderRadius: 12, background: "var(--color-primary)", color: "#fff", fontWeight: 700, fontSize: 15, textAlign: "center", textDecoration: "none" }}>공식 공고 확인 →</a>
             )}
-            {program.document_url && (
+            {!isDemoSource(program.source) && program.document_url && (
               <a href={program.document_url} target="_blank" rel="noreferrer" style={{ padding: "14px 18px", borderRadius: 12, border: "1.5px solid var(--color-border)", background: "#fff", color: "var(--color-foreground)", fontWeight: 600, fontSize: 14, textDecoration: "none" }}>첨부 문서</a>
             )}
             <button onClick={() => goAgent(program)} style={{ flex: 1, minWidth: 180, padding: "14px 16px", borderRadius: 12, border: "1.5px solid #C7D2FE", background: "#EEF2FF", color: "#1B4DFF", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>

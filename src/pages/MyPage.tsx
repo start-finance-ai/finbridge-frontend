@@ -1,3 +1,4 @@
+import { DEMO_NOTICE, isDemoSource, sourceLabel } from "../data/source";
 import { useEffect, useState } from "react";
 import { getProgram, postIncomeStability, postRiskCalculation, postSalesAnalysis } from "../api/client";
 import { programToBenefit, type Benefit } from "../data/benefits";
@@ -713,7 +714,7 @@ export default function MyPage({ likedIds, toggleLike, profile, setProfile }: My
             <div style={{ ...card, padding: 28, borderColor: "#C7D2FE", borderWidth: 1.5 }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <span style={{ padding: "3px 10px", borderRadius: 99, background: "#EEF2FF", color: "#1B4DFF", fontSize: 11, fontWeight: 700 }}>공식 데이터</span>
+                  <span style={{ padding: "3px 10px", borderRadius: 99, background: "#EEF2FF", color: "#1B4DFF", fontSize: 11, fontWeight: 700 }}>{sourceLabel(selectedBenefit.source)}</span>
                   <span style={{ fontSize: 14, fontWeight: 700, color: "#111827" }}>{selectedBenefit.title}</span>
                 </div>
                 <button onClick={() => toggleLike(selectedBenefit.id)}
@@ -728,14 +729,15 @@ export default function MyPage({ likedIds, toggleLike, profile, setProfile }: My
               <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
                 <div style={{ padding: "12px 16px", borderRadius: 10, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
                   <p style={{ fontSize: 11, color: "#6B7280", margin: "0 0 4px" }}>지원 대상</p>
-                  <p style={{ fontSize: 13, color: "#374151", margin: 0, lineHeight: 1.6 }}>{selectedBenefit.target || "공식 공고에서 확인 필요"}</p>
+                  <p style={{ fontSize: 13, color: "#374151", margin: 0, lineHeight: 1.6 }}>{selectedBenefit.target || (isDemoSource(selectedBenefit.source) ? "데모 예제에 기재되지 않음" : "원문에서 확인 필요")}</p>
                 </div>
                 <div style={{ padding: "12px 16px", borderRadius: 10, background: "#F9FAFB", border: "1px solid #E5E7EB" }}>
                   <p style={{ fontSize: 11, color: "#6B7280", margin: "0 0 4px" }}>공고 요약</p>
                   <p style={{ fontSize: 13, color: "#374151", margin: 0, lineHeight: 1.6 }}>{selectedBenefit.summary}</p>
                 </div>
               </div>
-              {selectedBenefit.sourceUrl && (
+              {isDemoSource(selectedBenefit.source) && <p style={{ fontSize: 13, color: "#92400E" }}>{DEMO_NOTICE}</p>}
+              {!isDemoSource(selectedBenefit.source) && selectedBenefit.sourceUrl && (
                 <a href={selectedBenefit.sourceUrl} target="_blank" rel="noreferrer" style={{ display: "block", marginTop: 18, width: "100%", padding: 12, boxSizing: "border-box", borderRadius: 10, background: "#1B4DFF", color: "#fff", fontWeight: 700, fontSize: 14, textAlign: "center", textDecoration: "none" }}>공식 공고 확인 →</a>
               )}
             </div>

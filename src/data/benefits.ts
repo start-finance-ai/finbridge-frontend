@@ -3,6 +3,7 @@ import type {
   Program,
   ProgramSearchResult,
 } from "../api/types";
+import { isDemoSource } from "./source";
 
 export type BenefitStatus = "신청 가능" | "신청 예정" | "마감" | "확인 필요";
 
@@ -61,7 +62,7 @@ export function searchResultToBenefit(result: ProgramSearchResult): Benefit {
     tag: program.subcategory || program.category || "지원사업",
     title: program.program_name,
     org: program.executing_organization || program.provider || "기관 정보 확인 필요",
-    summary: toPlainText(program.summary_text) || "상세 내용은 공식 공고에서 확인해주세요.",
+    summary: toPlainText(program.summary_text) || (isDemoSource(result.source) ? "데모 예제의 상세 정보가 없습니다." : "상세 내용은 원문에서 확인해주세요."),
     target: toPlainText(program.target_text) || undefined,
     status: STATUS_LABEL[program.application_status],
     deadline: daysUntil(program.apply_end, program.application_status),
@@ -77,7 +78,7 @@ export function programToBenefit(program: Program): Benefit {
     tag: program.subcategory || program.category || "지원사업",
     title: program.program_name,
     org: program.executing_organization || program.provider || "기관 정보 확인 필요",
-    summary: toPlainText(program.summary_raw) || "상세 내용은 공식 공고에서 확인해주세요.",
+    summary: toPlainText(program.summary_raw) || (isDemoSource(program.source) ? "데모 예제의 상세 정보가 없습니다." : "상세 내용은 원문에서 확인해주세요."),
     target: toPlainText(program.target_type_raw) || undefined,
     status: STATUS_LABEL[status],
     deadline: daysUntil(program.apply_end, status),

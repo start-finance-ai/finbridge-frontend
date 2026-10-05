@@ -42,7 +42,7 @@ const BANNER_CONFIG: Record<BannerStatus, {
     bgLight: "#FFFBEB", bgDark: "rgba(251,191,36,0.08)",
     borderLight: "#FDE68A", borderDark: "rgba(251,191,36,0.25)",
     label: "추가 확인 필요",
-    message: "일부 조건은 공식 공고에서 추가 확인이 필요합니다.",
+    message: "일부 조건은 추가 확인이 필요합니다. 실제 공고는 원문을 확인해 주세요.",
   },
   error: {
     icon: (

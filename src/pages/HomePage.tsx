@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CategoryType } from "../App";
 import { getPrograms } from "../api/client";
+import { DEMO_NOTICE, isDemoSource } from "../data/source";
 import BenefitCard from "../components/BenefitCard";
 import { searchResultToBenefit, type Benefit } from "../data/benefits";
 
@@ -89,7 +90,7 @@ export default function HomePage({ likedIds, toggleLike, goCategory, goSearch, g
         </h1>
 
         <p style={{ fontSize: 16, color: "var(--color-muted-foreground)", margin: 0, textAlign: "center" }}>
-          실제 기업마당 지원사업을 복잡한 공문서 없이 쉽게 확인
+          지원사업 조건과 근거를 한곳에서 쉽게 확인
         </p>
 
         <div style={{ width: "100%", maxWidth: 640, marginTop: 12, position: "relative" }}>
@@ -243,7 +244,7 @@ export default function HomePage({ likedIds, toggleLike, goCategory, goSearch, g
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 20 }}>
           <div>
             <h2 style={{ fontWeight: 700, fontSize: 20, margin: 0, letterSpacing: "-0.3px" }}>확인할 지원사업</h2>
-            <p style={{ fontSize: 13, color: "var(--color-muted-foreground)", margin: "4px 0 0" }}>기업마당 공식 데이터 기준</p>
+            <p style={{ fontSize: 13, color: "var(--color-muted-foreground)", margin: "4px 0 0" }}>{programs.some((program) => isDemoSource(program.source)) ? DEMO_NOTICE : "선택된 데이터 기준 · 최신 공고와 자격은 원문 확인"}</p>
           </div>
           <button
             onClick={() => goSearch("")}

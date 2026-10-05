@@ -1,41 +1,13 @@
-# figma-make-app
+# FinBridge Frontend
 
-React + Vite + Tailwind CSS project running inside Figma Make.
+React 19 + TypeScript + Vite 8 + Tailwind CSS v4 프로젝트입니다.
 
-## Development Server
-
-A Vite development server is **already running** on `$PORT` (default 8443). You don't need to start it manually.
-
-- Preview URL: The user can access the running app through the preview panel
-- Hot reload: Changes to source files are reflected immediately
-
-## Project Structure
-
-This is the canonical project structure. Start with task-relevant files below. Only follow imports or inspect other files when required, when a documented path is missing, or when the repository contradicts this guide.
-
-- `src/main.tsx` - React entrypoint; imports `src/index.css` and mounts `src/App.tsx` into the `#root` element
-- `src/App.tsx` - Primary application component and the usual starting point for UI work
-- `src/index.css` - Global CSS entrypoint and Tailwind CSS v4 import
-- `index.html` - Vite HTML shell containing the `#root` element and loading `src/main.tsx`
-- `package.json` - Project dependencies and the Vite build, development, preview, and formatting scripts
-- `vite.config.ts` - Vite configuration with React, Tailwind CSS v4, and Figma Make plugins plus the `@` alias for `src`
-- `.mise.toml` - Toolchain versions for Node.js and pnpm
-
-## Dependencies
-
-- Runtime: React 19 and React DOM 19
-- Styling: Tailwind CSS v4 with the `@tailwindcss/vite` plugin
-- Build tooling: Vite 8, TypeScript 5.7, and `@vitejs/plugin-react`
-- Formatting: oxfmt
-
-## Styling
-
-This project uses **Tailwind CSS v4** through the `@tailwindcss/vite` plugin configured in `vite.config.ts`. `src/index.css` imports Tailwind with `@import 'tailwindcss';`. Use Tailwind utility classes directly in JSX and put global CSS or Tailwind v4 theme customization in `src/index.css`. This scaffold does not need a Tailwind config file or PostCSS config.
-
-`src/main.tsx` imports `src/index.css`, so global font wiring belongs in `src/index.css`. Keep CSS `@import` statements first, then add any `@font-face` rules and font-family defaults there.
-
-## Code quality
-
-- Use double quotes for strings containing apostrophes (`"We're here to help"`), or escape them in single-quoted strings. An unescaped apostrophe in a single-quoted string breaks the build.
-- Ensure JSX tags are closed and braces are balanced.
-- Export components as default exports.
+- 기존 UI 구조와 스타일을 유지하며 필요한 수정만 합니다.
+- API 응답의 `source=DEMO`는 직접 작성한 예제로 표시하고 실제 공고로 표현하지 않습니다.
+- 지원 자격 판정과 금융 계산은 backend 응답을 사용합니다.
+- `VITE_` 환경변수는 브라우저에 노출됩니다. API Key나 토큰을 넣지 않습니다.
+- 개발 서버는 `pnpm dev`로 실행합니다. 기본 포트는 8443이며 `PORT`로 변경할 수 있습니다.
+- 변경 후 `pnpm exec tsc --noEmit`과 `pnpm build`로 확인합니다.
+- `src/api/`는 API 계약, `src/data/`는 화면 변환, `src/pages/`는 페이지, `src/components/`는 공통 UI입니다.
+- `src/index.css`는 전역 CSS와 Pretendard 폰트 설정입니다.
+- `vite.config.ts`에 원래 Figma Make 미리보기 구성이 남아 있습니다. 기능 변경 없이 임의 제거하지 않습니다.

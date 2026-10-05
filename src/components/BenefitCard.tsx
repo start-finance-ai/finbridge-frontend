@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { isDemoSource } from "../data/source";
 import type { BenefitStatus } from "../data/benefits";
 
 interface BenefitCardProps {
   id: string;
+  source?: string;
   tag: string;
   title: string;
   org: string;
@@ -33,6 +35,7 @@ const STATUS_CONFIG: Record<BenefitStatus, { bg: string; text: string; label: st
 };
 
 export default function BenefitCard({
+  source,
   tag,
   title,
   org,
@@ -78,7 +81,7 @@ export default function BenefitCard({
           background: tagStyle.bg, color: tagStyle.text,
           letterSpacing: "0.2px", flexShrink: 0,
         }}>
-          {tag}
+          {isDemoSource(source) ? "데모 예제" : tag}
         </span>
 
         <div style={{ display: "flex", alignItems: "center", justifyContent: "flex-end", gap: 4, flexWrap: "wrap" }}>
